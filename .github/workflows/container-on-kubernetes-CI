@@ -1,0 +1,30 @@
+name: Container on Kubernetes [CI]
+
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+
+jobs:
+  BUILD:
+    name: Build
+    runs-on: ubuntu-latest
+    needs:
+      - INIT
+    steps:
+      - run: echo "🎉 oi ${{ inputs.username }}"
+      - run: printenv | sort
+      
+  TEST:
+    name: Test
+    runs-on: ubuntu-latest
+    needs:
+      - INIT
+      - BUILD
+      
+    steps:
+      - run: echo "🎉 oi ${{ inputs.username }}"
+      - run: printenv | sort      
+      
