@@ -1,0 +1,16 @@
+name: Container on Kubernetes [CD]
+
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+
+jobs:
+  CD:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 oi ${{ inputs.username }}"
+      - run: printenv | sort
