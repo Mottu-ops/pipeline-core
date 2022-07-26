@@ -1,4 +1,4 @@
-name: Deployment
+name: Container on Kubernetes
 
 on:
   workflow_call:
