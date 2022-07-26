@@ -14,8 +14,8 @@ jobs:
     steps:
       - run: echo "Veja dcoumentação da pipeline em"
       
-  CI:
-    name: CI
+  BUILD:
+    name: BUILD
     runs-on: ubuntu-latest
     needs:
       - INIT
@@ -23,10 +23,20 @@ jobs:
       - run: echo "🎉 oi ${{ inputs.username }}"
       - run: printenv | sort
       
+  TEST:
+    name: TEST
+    runs-on: ubuntu-latest
+    needs:
+      - BUILD
+    steps:
+      - run: echo "🎉 oi ${{ inputs.username }}"
+      - run: printenv | sort      
+      
   CD:
     name: CD
     needs:
-      - CI
+      - BUILD
+      - TEST
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 oi ${{ inputs.username }}"
