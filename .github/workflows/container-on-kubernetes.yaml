@@ -40,8 +40,9 @@ jobs:
       - BUILD
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - id: foo
-        uses: ./.github/actions/deploy-kubernetes-argocd.yaml@main
+        uses: actions/deploy-kubernetes-argocd.yaml@main
         with:
           image: "the Octocat"
           
