@@ -11,8 +11,6 @@ jobs:
   BUILD:
     name: Build
     runs-on: ubuntu-latest
-    needs:
-      - INIT
     steps:
       - run: echo "🎉 oi ${{ inputs.username }}"
       - run: printenv | sort
@@ -20,10 +18,6 @@ jobs:
   TEST:
     name: Test
     runs-on: ubuntu-latest
-    needs:
-      - INIT
-      - BUILD
-      
     steps:
       - run: echo "🎉 oi ${{ inputs.username }}"
       - run: printenv | sort      
