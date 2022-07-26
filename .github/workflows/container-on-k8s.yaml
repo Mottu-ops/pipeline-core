@@ -15,7 +15,7 @@ jobs:
       - run: echo "Veja dcoumentação da pipeline em"
       
   CI:
-    name: Job1
+    name: CI
     runs-on: ubuntu-latest
     needs:
       - INIT
@@ -24,7 +24,7 @@ jobs:
       - run: printenv | sort
       
   CD:
-    name: Job2
+    name: CD
     needs:
       - CI
     runs-on: ubuntu-latest
