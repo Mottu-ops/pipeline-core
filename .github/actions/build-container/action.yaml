@@ -22,8 +22,8 @@ runs:
       shell: bash
     - run: printenv | sort
       shell: bash
-      env:
-        SECRET_QUALQUER: "ABCPOW"
+#       env:
+#         SECRET_QUALQUER: "ABCPOW"
     
     
 #     - run: echo Hello ${{ inputs.who-to-greet }}.
