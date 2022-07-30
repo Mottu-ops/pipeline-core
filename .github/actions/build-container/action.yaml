@@ -1,0 +1,45 @@
+name: 'Build Container'
+description: 'Build Contianer'
+inputs:
+  environment:
+    required: true
+  tag:
+    required: true
+  
+  secret_qualquer:
+    required: true
+  
+    
+#   who-to-greet:  # id of input
+#     description: 'Who to greet'
+#     required: true
+#     default: 'World'
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-number }}
+runs:
+  using: "composite"
+  steps:
+    - run: echo run docker build
+      title: "Docker Build"
+      
+    - run: echo buildando imagem -> ${{ inputs.tag }}
+    
+    - run: echo secret: ${{ inputs.secret_qualquer }}
+    
+    - run: printenv | sort
+      env:
+        SECRET_QUALQUER: ${{ inputs.secret_qualquer }}
+    
+    
+#     - run: echo Hello ${{ inputs.who-to-greet }}.
+#       shell: bash
+      
+#     - id: random-number-generator
+#       run: echo "::set-output name=random-number::$(echo $RANDOM)"
+#       shell: bash
+#     - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+#       shell: bash          
+#     - run: echo tchau
+#       shell: bash
