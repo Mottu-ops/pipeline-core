@@ -11,6 +11,7 @@ inputs:
   
 runs:
   using: "composite"
+  name: "Teste Action Name"
   steps:
     - run: echo run docker build
       shell: bash
