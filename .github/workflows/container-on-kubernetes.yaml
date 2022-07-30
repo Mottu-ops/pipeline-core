@@ -16,30 +16,30 @@ jobs:
       - run: echo "🎉 oi ${{ inputs.username }}"
       - run: printenv | sort
       
-  hello_world_job:
-    runs-on: ubuntu-latest
-    name: A job to say hello
-    steps:
+#   hello_world_job:
+#     runs-on: ubuntu-latest
+#     name: A job to say hello
+#     steps:
 
-      - uses: actions/checkout@v3
-        with:
-         repository: defaultbr/cicd-base
-         token: ${{ secrets.GITHUB_TOKEN }}
-         ref: main    
+#        - uses: actions/checkout@v3
+#         with:
+#          repository: defaultbr/cicd-base
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          ref: main    
          
          
          
        
-      - run: echo "${{ secrets }}"
-      - run: echo segredo é "${{ secrets.SECRET_FROM_ACTION_SECRETS }}"
+#       - run: echo "${{ secrets }}"
+#       - run: echo segredo é "${{ secrets.SECRET_FROM_ACTION_SECRETS }}"
 
-      - id: buildContainerHomologation
-        uses: ./.github/actions/build-container
-        name: "action From Workflow name"
-        with:
-          environment: homologation
-          secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
-          tag: tag:abc1
+#       - id: buildContainerHomologation
+#         uses: ./.github/actions/build-container
+#         name: "action From Workflow name"
+#         with:
+#           environment: homologation
+#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
+#           tag: tag:abc1
           
       
 #       - id: buildContainerProduction
@@ -65,10 +65,11 @@ jobs:
 #       - run: printenv | sort      
       
   CD:
-    name: CD
+    name: Deploy
     environment: homologation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: echo ${{ env.ENVIRONMENT }}
       - run: echo "🎉 oi ${{ inputs.username }}"
       - run: printenv | sort
