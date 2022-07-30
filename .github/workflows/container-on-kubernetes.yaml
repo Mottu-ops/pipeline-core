@@ -39,7 +39,7 @@ jobs:
             
       
       - id: foo
-        uses: actions/hello-world-composite-action@main
+        uses: ./.github/actions/hello-world-composite-action
         with:
           who-to-greet: 'Mona the Octocat'
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
