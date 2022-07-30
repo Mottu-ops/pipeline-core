@@ -39,11 +39,16 @@ jobs:
             
       
       - id: foo
-        uses: ./.github/actions/hello-world
+        uses: ./.github/actions/build-container
         with:
-          who-to-greet: 'Mona the Octocat'
-      - run: echo random-number ${{ steps.foo.outputs.random-number }}
-        shell: bash
+          environment: test
+          secret_qualquer: secret_qualquer
+          tag: tag:abc1
+          
+          
+
+#       - run: echo random-number ${{ steps.foo.outputs.random-number }}
+#         shell: bash
         
 #   TEST:
 #     name: TEST
