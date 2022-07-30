@@ -22,13 +22,15 @@ runs:
   using: "composite"
   steps:
     - run: echo run docker build
+      shell: bash
       name: Run Docker BUild
       
     - run: echo buildando imagem -> ${{ inputs.tag }}
-    
+      shell: bash
     - run: echo secret: ${{ inputs.secret_qualquer }}
-    
+      shell: bash
     - run: printenv | sort
+      shell: bash
       env:
         SECRET_QUALQUER: ${{ inputs.secret_qualquer }}
     
