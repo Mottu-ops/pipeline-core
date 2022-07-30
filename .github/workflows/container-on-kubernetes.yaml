@@ -9,12 +9,12 @@ on:
 
 jobs:
 
-  build:
-    name: BUILD
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 oi ${{ inputs.username }}"
-      - run: printenv | sort
+#   build:
+#     name: BUILD
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "🎉 oi ${{ inputs.username }}"
+#       - run: printenv | sort
       
 #   hello_world_job:
 #     runs-on: ubuntu-latest
@@ -69,7 +69,7 @@ jobs:
     environment: homologation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+#       - uses: actions/checkout@v3
       - run: echo ${{ env.ENVIRONMENT }}
-      - run: echo "🎉 oi ${{ inputs.username }}"
+      
       - run: printenv | sort
