@@ -27,14 +27,26 @@ jobs:
          token: ${{ secrets.GITHUB_TOKEN }}
          ref: main    
          
+         
+         
        
-      - run: echo ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
+      - run: echo "${{ secrets }}"
+      - run: echo segredo é "${{ secrets.SECRET_FROM_ACTION_SECRETS }}"
 
-      - id: foo
+      - id: buildContainerHomologation
         uses: ./.github/actions/build-container
         name: "action From Workflow name"
         with:
-          environment: test
+          environment: homologation
+          secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
+          tag: tag:abc1
+          
+          
+      - id: buildContainerProduction
+        uses: ./.github/actions/build-container
+        name: "action From Workflow name"
+        with:
+          environment: production
           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
           tag: tag:abc1
           
