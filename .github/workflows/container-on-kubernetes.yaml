@@ -40,6 +40,7 @@ jobs:
       
       - id: foo
         uses: ./.github/actions/build-container
+        name: "action From Workflow name"
         with:
           environment: test
           secret_qualquer: secret_qualquer
