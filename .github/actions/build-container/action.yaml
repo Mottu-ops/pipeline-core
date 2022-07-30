@@ -9,15 +9,6 @@ inputs:
   secret_qualquer:
     required: true
   
-    
-#   who-to-greet:  # id of input
-#     description: 'Who to greet'
-#     required: true
-#     default: 'World'
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-number }}
 runs:
   using: "composite"
   steps:
@@ -32,7 +23,7 @@ runs:
     - run: printenv | sort
       shell: bash
       env:
-        SECRET_QUALQUER: ${{ inputs.secret_qualquer }}
+        SECRET_QUALQUER: "ABCPOW"
     
     
 #     - run: echo Hello ${{ inputs.who-to-greet }}.
