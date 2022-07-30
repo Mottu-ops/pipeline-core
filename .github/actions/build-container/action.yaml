@@ -22,7 +22,7 @@ runs:
   using: "composite"
   steps:
     - run: echo run docker build
-      title: "Docker Build"
+      name: Run Docker BUild
       
     - run: echo buildando imagem -> ${{ inputs.tag }}
     
