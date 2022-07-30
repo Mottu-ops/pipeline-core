@@ -41,14 +41,14 @@ jobs:
           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
           tag: tag:abc1
           
-          
-      - id: buildContainerProduction
-        uses: ./.github/actions/build-container
-        name: "action From Workflow name"
-        with:
-          environment: production
-          secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
-          tag: tag:abc1
+      
+#       - id: buildContainerProduction
+#         uses: ./.github/actions/build-container
+#         name: "action From Workflow name"
+#         with:
+#           environment: production
+#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
+#           tag: tag:abc1
           
           
 
@@ -64,12 +64,11 @@ jobs:
 #       - run: echo "🎉 oi ${{ inputs.username }}"
 #       - run: printenv | sort      
       
-#   CD:
-#     name: CD
-#     needs:
-#       - TEST
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - run: echo "🎉 oi ${{ inputs.username }}"
-#       - run: printenv | sort
+  CD:
+    name: CD
+    environment: homologation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "🎉 oi ${{ inputs.username }}"
+      - run: printenv | sort
