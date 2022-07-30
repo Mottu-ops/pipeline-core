@@ -37,12 +37,12 @@ jobs:
       - run: ls .github/actions  || true
             
       
-      - id: foo
-        uses: actions/hello-world-composite-action@v1
-        with:
-          who-to-greet: 'Mona the Octocat'
-      - run: echo random-number ${{ steps.foo.outputs.random-number }}
-        shell: bash
+#       - id: foo
+#         uses: actions/hello-world-composite-action@v1
+#         with:
+#           who-to-greet: 'Mona the Octocat'
+#       - run: echo random-number ${{ steps.foo.outputs.random-number }}
+#         shell: bash
         
 #   TEST:
 #     name: TEST
