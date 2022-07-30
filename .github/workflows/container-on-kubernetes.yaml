@@ -28,10 +28,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - id: foo
-        uses: actions/deploy-kubernetes-argocd.yaml@main
-        with:
-          image: "the Octocat"
-          
       - run: echo "🎉 oi ${{ inputs.username }}"
       - run: printenv | sort
