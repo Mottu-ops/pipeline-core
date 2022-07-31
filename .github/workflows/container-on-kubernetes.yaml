@@ -23,6 +23,7 @@ jobs:
       
   deployHomologation:
     name: deploy homologation
+    environment: homologation
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: 
       - build
@@ -33,6 +34,7 @@ jobs:
       
   deployProduction:
     name: deploy production
+    environment: production
     if: startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request'
     needs: 
       - build
