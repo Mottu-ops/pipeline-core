@@ -8,13 +8,47 @@ on:
         type: string
 
 jobs:
-
-#   build:
-#     name: BUILD
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build"
+      
+  test:
+    name: test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build" 
+      
+  deployHomologation:
+    name: deploy homologation
+    needs: 
+      - build
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy homologation" 
+      
+  deployProduction:
+    name: deploy production
+    needs: 
+      - build
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy homologation"       
+      
+#   test:
+#     name: test
+#     needs: build
 #     runs-on: ubuntu-latest
 #     steps:
-#       - run: echo "🎉 oi ${{ inputs.username }}"
-#       - run: printenv | sort
+#       - run: echo "build"       
+
+
+  
+  
       
 #   hello_world_job:
 #     runs-on: ubuntu-latest
