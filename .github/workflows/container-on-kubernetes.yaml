@@ -2,10 +2,10 @@ name: Container on Kubernetes
 
 on:
   workflow_call:
-    inputs:
-      username:
-        required: true
-        type: string
+#     inputs:
+#       username:
+#         required: true
+#         type: string
 
 jobs:
   build:
@@ -98,12 +98,12 @@ jobs:
 #       - run: echo "🎉 oi ${{ inputs.username }}"
 #       - run: printenv | sort      
       
-  CD:
-    name: Deploy
-    environment: homologation
-    runs-on: ubuntu-latest
-    steps:
-#       - uses: actions/checkout@v3
-      - run: echo ${{ env.ENVIRONMENT }}
+#   CD:
+#     name: Deploy
+#     environment: homologation
+#     runs-on: ubuntu-latest
+#     steps:
+# #       - uses: actions/checkout@v3
+#       - run: echo ${{ env.ENVIRONMENT }}
       
-      - run: printenv | sort
+#       - run: printenv | sort
