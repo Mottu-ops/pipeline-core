@@ -2,10 +2,6 @@ name: Container on Kubernetes
 
 on:
   workflow_call:
-#     inputs:
-#       username:
-#         required: true
-#         type: string
 
 jobs:
   build:
@@ -13,6 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "build"
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+      
+      - run: make build-homolog
+
+    
       
   test:
     name: test
