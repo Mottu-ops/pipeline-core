@@ -1,0 +1,124 @@
+name: Container on Kubernetes
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build"
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - run: npm ci || npm install
+
+      - run: make build-homolog
+
+    
+      
+  test:
+    name: test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build" 
+      
+  deployHomologation:
+    name: deploy homologation
+    environment: homologation
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: 
+      - build
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy homologation" 
+      
+  deployProduction:
+    name: deploy production
+    environment: production
+    if: startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request'
+    needs: 
+      - build
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy homologation"       
+      
+#   test:
+#     name: test
+#     needs: build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "build"       
+
+
+  
+  
+      
+#   hello_world_job:
+#     runs-on: ubuntu-latest
+#     name: A job to say hello
+#     steps:
+
+#        - uses: actions/checkout@v3
+#         with:
+#          repository: defaultbr/cicd-base
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          ref: main    
+         
+         
+         
+       
+#       - run: echo "${{ secrets }}"
+#       - run: echo segredo é "${{ secrets.SECRET_FROM_ACTION_SECRETS }}"
+
+#       - id: buildContainerHomologation
+#         uses: ./.github/actions/build-container
+#         name: "action From Workflow name"
+#         with:
+#           environment: homologation
+#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
+#           tag: tag:abc1
+          
+      
+#       - id: buildContainerProduction
+#         uses: ./.github/actions/build-container
+#         name: "action From Workflow name"
+#         with:
+#           environment: production
+#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
+#           tag: tag:abc1
+          
+          
+
+#       - run: echo random-number ${{ steps.foo.outputs.random-number }}
+#         shell: bash
+        
+#   TEST:
+#     name: TEST
+#     runs-on: ubuntu-latest
+#     needs:
+#       - BUILD
+#     steps:
+#       - run: echo "🎉 oi ${{ inputs.username }}"
+#       - run: printenv | sort      
+      
+#   CD:
+#     name: Deploy
+#     environment: homologation
+#     runs-on: ubuntu-latest
+#     steps:
+# #       - uses: actions/checkout@v3
+#       - run: echo ${{ env.ENVIRONMENT }}
+      
+#       - run: printenv | sort
