@@ -19,8 +19,8 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
 
-      - run: npm ci      
-      
+      - run: npm ci || npm install
+
       - run: make build-homolog
 
     
