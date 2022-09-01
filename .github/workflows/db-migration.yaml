@@ -17,11 +17,6 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore    
 
-      - name: Build DotNet
-        uses: Elskom/build-dotnet@v1.1.1
-        continue-on-error: true
-        with:
-          SOLUTION_FILE_PATH: ./script.mottu.sln
 
       - name: .Net Build
         # You may pin to the exact commit or the version.
@@ -30,7 +25,7 @@ jobs:
         with:
           build-args: /p:platform="any cpu" /p:configuration="release" /p:VisualStudioVersion="17.0"
           build-configuration: Release
-          path: mottu.S
+          path: script.mottu.sln
 
 
       # - name: Docker Login
