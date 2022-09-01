@@ -5,12 +5,7 @@ on:
 
 
 env:
-  # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: script.mottu.sln
-
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
 permissions:
@@ -33,74 +28,17 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}    
-      # - run: echo "build"
-      # - uses: actions/checkout@v3
-
-      # - name: Setup .NET
-      #   uses: actions/setup-dotnet@v2
-      #   with:
-      #     dotnet-version: '6.x' # SDK Version to use; x will use the latest version of the 3.1 channel
-
-      # - name: setup-msbuild
-      #   uses: microsoft/setup-msbuild@v1.1
-      #   with:
-      #     # Folder location of where vswhere.exe is located if a self-hosted agent
-      #     # vswhere-path: # optional
-      #     # Version of Visual Studio to search; defaults to latest if not specified
-      #     vs-version: 17.0
-      #     # Enable searching for pre-release versions of Visual Studio/MSBuild
-      #     # vs-prerelease: # optional
-      #     # msbuild-architecture: # optional, default is x86          
-
-      # - name: Restore dependencies
-      #   run: dotnet restore
-        
-      # - name: Build
-      #   run: dotnet build --no-restore
-      # # - name: Build
-      # #   run: dotnet build script.mottu.sln /p:platform="any cpu" /p:configuration="release" /p:VisualStudioVersion="17.0"
-
-      # # - name: .Net Build
-      # #   # You may pin to the exact commit or the version.
-      # #   # uses: EasyDesk/action-dotnet-build@d2c47d8701e3ea8db03dcabaacb37204fe123a22
-      # #   uses: EasyDesk/action-dotnet-build@v1.0.0
-      # #   with:
-      # #     build-args: -property:VisualStudioVersion="17.0"
-      # #     build-configuration: Release
-      # #     path: script.mottu.sln
 
 
-      # # - name: Docker Login
-      # #   uses: docker/login-action@v2.0.0
-      # #   with:
-      # #     # Server address of Docker registry. If not set then will default to Docker Hub
-      # #     registry: gcr.io/mottu-321312
-      # #     # Username used to log against the Docker registry
-      # #     username: # optional
-      # #     # Password or personal access token used to log against the Docker registry
-      # #     password: # optional
-      # #     # Specifies whether the given registry is ECR (auto, true or false)
-      # #     ecr: # optional, default is auto
-      # #     # Log out from the Docker registry at the end of a job
-      # #     logout: # optional, default is true        
+    - run: mkdir -p build-artifacts
+    - run: |
+        mv mottu.Script\bin\Release\mottu.Script.dacpac build-artifacts
+        mv mottu.Script\bin\Release\mottu.Script.dll build-artifacts
+        mv mottu.Script\bin\Release\mottu.Script.pdb build-artifacts
 
-      # # - run: |
-      # #     make docker-build
-      # #   name: 'build images'
-
-      # # - name: Setup Node.js environment
-      # #   uses: actions/setup-node@v3.4.1
-      # #   with:
-      # #     node-version-file: .nvmrc
-      # #     cache: 'npm'
-
-            
-
-      # # - run: npm ci || npm install
-
-      # # - run: make build-homolog
-
-    
+    - name: Upload Artifact GitHub Action
+      uses: actions/upload-artifact@v2
+      with: 
+        name: build
+        path: build-artifacts
