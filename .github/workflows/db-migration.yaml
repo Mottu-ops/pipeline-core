@@ -30,7 +30,7 @@ jobs:
         with:
           # build-args: # optional
           build-configuration: Release
-          path: script.mottu.sln
+          path: mottu.S
 
 
       # - name: Docker Login
