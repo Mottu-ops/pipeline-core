@@ -3,10 +3,6 @@ name: Database Migration
 on:
   workflow_call:
 
-env:
-  SOLUTION_FILE_PATH: script.mottu.sln
-  BUILD_CONFIGURATION: Release
-
 permissions:
   contents: read
 
@@ -44,7 +40,6 @@ jobs:
     name: apply development
     environment: development
     runs-on: windows-latest
-    secrets: inherit
     needs: build
     steps:
       - name: Download a Build Artifact
@@ -78,7 +73,6 @@ jobs:
   apply-production:
     name: apply production
     environment: production
-    secrets: inherit
     runs-on: windows-latest
     needs: build
     steps:
