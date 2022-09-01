@@ -28,10 +28,12 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}    
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:AssemblyName=project ${{env.SOLUTION_FILE_PATH}} 
 
 
     - run: mkdir -p build-artifacts
+
+    - run: dir mottu.Script\bin\Release\
     - run: |
         mv mottu.Script\bin\Release\mottu.Script.dacpac build-artifacts
         mv mottu.Script\bin\Release\mottu.Script.dll build-artifacts
