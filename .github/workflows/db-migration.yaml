@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - run: echo "build"
       - uses: actions/checkout@v3
