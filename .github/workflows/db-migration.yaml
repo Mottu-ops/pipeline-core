@@ -20,7 +20,10 @@ jobs:
         run: dotnet restore    
 
       - name: Build
-        run: dotnet build script.mottu.sln --no-restore --configuration Release /p:VisualStudioVersion="17.0" 
+        run: dotnet restore script.mottu.sln
+
+      - name: Build
+        run: dotnet build script.mottu.sln /p:platform="any cpu" /p:configuration="release" /p:VisualStudioVersion="17.0"
 
       # - name: .Net Build
       #   # You may pin to the exact commit or the version.
