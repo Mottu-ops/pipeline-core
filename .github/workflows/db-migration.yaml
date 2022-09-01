@@ -23,7 +23,7 @@ jobs:
         # uses: EasyDesk/action-dotnet-build@d2c47d8701e3ea8db03dcabaacb37204fe123a22
         uses: EasyDesk/action-dotnet-build@v1.0.0
         with:
-          build-args: /p:VisualStudioVersion="17.0"
+          build-args: -property:VisualStudioVersion="17.0"
           build-configuration: Release
           path: script.mottu.sln
 
