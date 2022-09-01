@@ -10,7 +10,15 @@ on:
       BUILD_CONFIGURATION:
         required: true
         type: string
-                
+
+      OUTPUT_DACPAC_FILE_NAME:
+        required: true
+        type: string
+
+      ADDITIONAL_SQL_ARGUMENTS:
+        required: true
+        type: string
+ 
 
 permissions:
   contents: read
@@ -56,26 +64,14 @@ jobs:
         with:
           name: build
           path: .
-      
-      - run: dir
 
-      # - name: Azure SQL Deploy (dacpac, file, folder)
-      #   # You may pin to the exact commit or the version.
-      #   # uses: XLipcak/sql-action@1b2b1ea66beb232831e97be2be8382be8f006840
-      #   uses: XLipcak/sql-action@v1.0.5
-      #   with:
-      #     # Name of the Azure SQL Server name, like Fabrikam.database.windows.net.
-      #     server-name: 
-      #     # The connection string, including authentication information, for the Azure SQL Server database.
-      #     connection-string: 
-      #     # Path to DACPAC file. *.dacpac or a folder to deploy
-      #     dacpac-package: # optional
-      #     # Path to SQL script file. *.sql or a folder to deploy
-      #     sql-file: # optional
-      #     # Path to SQL folder to deploy
-      #     sql-folder: # optional
-      #     # In case DACPAC option is selected, additional SqlPackage.exe arguments that will be applied. When SQL query option is selected, additional sqlcmd.exe arguments will be applied.
-      #     arguments: # optional        
+      - name: Azure SQL Deploy (dacpac, file, folder)
+        uses: XLipcak/sql-action@v1.0.5
+        with:
+          server-name: ${{secrets.SERVER_NAME}}
+          connection-string: ${{secrets.CONNECTION_STRING}}
+          dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
+          arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
 
 
 
@@ -90,23 +86,11 @@ jobs:
         with:
           name: build
           path: .
-      
-      - run: dir
 
-      # - name: Azure SQL Deploy (dacpac, file, folder)
-      #   # You may pin to the exact commit or the version.
-      #   # uses: XLipcak/sql-action@1b2b1ea66beb232831e97be2be8382be8f006840
-      #   uses: XLipcak/sql-action@v1.0.5
-      #   with:
-      #     # Name of the Azure SQL Server name, like Fabrikam.database.windows.net.
-      #     server-name: 
-      #     # The connection string, including authentication information, for the Azure SQL Server database.
-      #     connection-string: 
-      #     # Path to DACPAC file. *.dacpac or a folder to deploy
-      #     dacpac-package: # optional
-      #     # Path to SQL script file. *.sql or a folder to deploy
-      #     sql-file: # optional
-      #     # Path to SQL folder to deploy
-      #     sql-folder: # optional
-      #     # In case DACPAC option is selected, additional SqlPackage.exe arguments that will be applied. When SQL query option is selected, additional sqlcmd.exe arguments will be applied.
-      #     arguments: # optional        
+      - name: Azure SQL Deploy (dacpac, file, folder)
+        uses: XLipcak/sql-action@v1.0.5
+        with:
+          server-name: ${{secrets.SERVER_NAME}}
+          connection-string: ${{secrets.CONNECTION_STRING}}
+          dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
+          arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
