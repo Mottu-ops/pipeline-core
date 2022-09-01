@@ -13,8 +13,9 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
-        dotnet-version: '3.1.x' # SDK Version to use; x will use the latest version of the 3.1 channel
-        
+        with:
+          dotnet-version: '3.1.x' # SDK Version to use; x will use the latest version of the 3.1 channel
+
       - name: Restore dependencies
         run: dotnet restore    
 
