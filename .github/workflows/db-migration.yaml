@@ -20,7 +20,7 @@ jobs:
       - name: Build DotNet
         uses: Elskom/build-dotnet@v1.1.1
         with:
-          SOLUTION_FILE_PATH: script.mottu.sln
+          SOLUTION_FILE_PATH: ./script.mottu.sln
 
 
       # - name: Docker Login
