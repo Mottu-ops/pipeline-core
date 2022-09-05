@@ -30,17 +30,17 @@ jobs:
       - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
 
 
-      - name: Build DotNet
-        uses: Elskom/build-dotnet@v1.1.1
-        with:
-          SOLUTION_FILE_PATH: ${{ inputs.PROJECT_FILE_PATH }}
-          TEST: true
-          PACK: true
+      # - name: Build DotNet
+      #   uses: Elskom/build-dotnet@v1.1.1
+      #   with:
+      #     SOLUTION_FILE_PATH: ${{ inputs.PROJECT_FILE_PATH }}
+      #     TEST: true
+      #     PACK: true
 
 
-      # - run: |
-      #     dotnet build ${{ inputs.PROJECT_FILE_PATH }}
-      #     dotnet pack  ${{ inputs.PROJECT_FILE_PATH }} --version-suffix $GITHUB_RUN_ID
+      - run: |
+          dotnet build ${{ inputs.PROJECT_FILE_PATH }}
+          dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} --version-suffix $GITHUB_RUN_ID
 
       - run: |
           ls bin/Release/ || true
