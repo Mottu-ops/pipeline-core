@@ -31,12 +31,10 @@ jobs:
 
 
       - name: Build DotNet
-        # You may pin to the exact commit or the version.
-        # uses: Elskom/build-dotnet@54d97a0f7d5d5ca946404976db00d27386b09254
         uses: Elskom/build-dotnet@v1.1.1
         with:
-          # Filepath of the solution of which contains all the projects to be built, optionally tested and packed, relative to root of repository
           SOLUTION_FILE_PATH: ${{ inputs.PROJECT_FILE_PATH }}
+          TEST: true
           PACK: true
 
 
@@ -47,7 +45,7 @@ jobs:
       - run: |
           ls bin/Release/ || true
 
-      # # Publish the package to Azure Artifacts
-      # - name: 'dotnet publish'
-      #   run: dotnet nuget push --api-key AzureArtifacts bin/Release/*.nupkg 
+      # Publish the package to Azure Artifacts
+      - name: 'dotnet publish'
+        run: dotnet nuget push --api-key AzureArtifacts bin/Release/*.nupkg 
   
