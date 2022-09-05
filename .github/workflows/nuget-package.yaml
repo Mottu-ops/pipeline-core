@@ -2,7 +2,10 @@ name: Database Migration
 
 on:
   workflow_call:
-
+    inputs:
+      PROJECT_FILE_PATH:
+        required: true
+        type: string  
 jobs:
   build:
     name: nuget build & package
@@ -18,6 +21,10 @@ jobs:
       - name: Setup .NET Core SDK 6.x
         uses: actions/setup-dotnet@v2.1.0
         with:
-          dotnet-version: 6.x      
+          dotnet-version: 6.x
+
+      - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
+
+      - run: dotnet build ${{ inputs.PROJECT_FILE_PATH }}
 
   
