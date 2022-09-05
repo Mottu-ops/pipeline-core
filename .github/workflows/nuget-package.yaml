@@ -1,0 +1,23 @@
+name: Database Migration
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: nuget build & package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup NuGet.exe for use with actions
+        uses: NuGet/setup-nuget@v1.0.7
+        with:
+          nuget-version: 6.3.0
+
+      - name: Setup .NET Core SDK 6.x
+        uses: actions/setup-dotnet@v2.1.0
+        with:
+          dotnet-version: 6.x      
+
+  
