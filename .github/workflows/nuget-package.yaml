@@ -17,11 +17,16 @@ jobs:
         uses: NuGet/setup-nuget@v1.0.7
         with:
           nuget-version: 6.3.0
+          
 
       - name: Setup .NET Core SDK 6.x
         uses: actions/setup-dotnet@v2.1.0
         with:
           dotnet-version: 6.x
+          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }} 
+
 
       - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
 
