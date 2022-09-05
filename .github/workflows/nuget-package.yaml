@@ -30,28 +30,12 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }} 
 
-
       - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
 
+      - run: dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
 
-      # - name: Build DotNet
-      #   uses: Elskom/build-dotnet@v1.1.1
-      #   with:
-      #     SOLUTION_FILE_PATH: ${{ inputs.PROJECT_FILE_PATH }}
-      #     TEST: true
-      #     PACK: true
+      - run: dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
 
-
-
-      - run: |
-
-          dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
-          dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
-
-      - run: |
-          ls bin/Release/ || true
-
-      # Publish the package to Azure Artifacts
       - name: 'dotnet publish'
         run: dotnet nuget push --api-key AzureArtifacts bin/Release/*.nupkg 
   
