@@ -39,7 +39,10 @@ jobs:
 
       - run: |
           printenv | sort
-          echo $GITHUB_RUN_ID
+          echo $GITHUB_RUN_ID        
+          echo ${{ github.run_id }}    
+          echo ${{ github.run_number }}        
+          echo ${{ github.run_attempt }}
 
       - run: |
 
