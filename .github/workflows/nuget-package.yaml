@@ -6,6 +6,10 @@ on:
       PROJECT_FILE_PATH:
         required: true
         type: string  
+      
+      VERSION:
+        required: true
+        type: string
 jobs:
   build:
     name: nuget build & package
@@ -37,16 +41,11 @@ jobs:
       #     TEST: true
       #     PACK: true
 
-      - run: |
-          printenv | sort
-          echo $GITHUB_RUN_ID        
-          echo ${{ github.run_id }}    
-          echo ${{ github.run_number }}        
-          echo ${{ github.run_attempt }}
+
 
       - run: |
 
-          dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=0.1.$GITHUB_RUN_ID
+          dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }}
           dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} 
 
       - run: |
