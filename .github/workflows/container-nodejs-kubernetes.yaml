@@ -23,21 +23,25 @@ jobs:
       - name: Setup docker
         run: gcloud auth configure-docker -q
 
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'        
+
+      - run: npm ci || npm install
+
+      - run: npm run build
+
       - run: |
           make docker-build
         name: 'build images'
 
-      # - name: Setup Node.js environment
-      #   uses: actions/setup-node@v3.4.1
-      #   with:
-      #     node-version-file: .nvmrc
-      #     cache: 'npm'
+
 
             
 
-      # - run: npm ci || npm install
 
-      # - run: make build-homolog
 
     
       
