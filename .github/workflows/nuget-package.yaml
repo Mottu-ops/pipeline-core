@@ -45,7 +45,7 @@ jobs:
 
       - run: |
 
-          dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }}
+          dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
           dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} 
 
       - run: |
