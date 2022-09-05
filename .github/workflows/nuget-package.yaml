@@ -39,7 +39,7 @@ jobs:
 
 
       - run: |
-          dotnet build ${{ inputs.PROJECT_FILE_PATH }}
+          dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }}
           dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} --version-suffix $GITHUB_RUN_ID
 
       - run: |
