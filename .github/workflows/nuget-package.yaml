@@ -26,40 +26,12 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }} 
 
-      - name: Publish NuGet@alirezanet
-        # You may pin to the exact commit or the version.
-        # uses: alirezanet/publish-nuget@9bec5efe06c5967ee85c281c7600dbef3e6f7d04
-        uses: alirezanet/publish-nuget@v3.0.4
-        with:
-          # Filepath of the project to be packaged, relative to root of repository
-          PROJECT_FILE_PATH: ${{ inputs.PROJECT_FILE_PATH}}
-          # # NuGet package id, used for version detection & defaults to project name
-          # PACKAGE_NAME: # optional
-          # # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
-          # VERSION_FILE_PATH: # optional
-          # # Regex pattern to extract version info in a capturing group
-          # VERSION_REGEX: # optional, default is ^\s*<Version>(.*)<\/Version>\s*$
-          # # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-          # VERSION_STATIC: # optional
-          # # Flag to toggle git tagging, enabled by default
-          # TAG_COMMIT: # optional, default is true
-          # # Format of the git tag, [*] gets replaced with actual version
-          # TAG_FORMAT: # optional, default is v*
-          # API key to authenticate with NuGet server
-          NUGET_KEY: ${{ secrets.AZURE_ARTIFACTS_PAT }}
-          # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-          NUGET_SOURCE: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
-          # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-          # INCLUDE_SYMBOLS: # optional
-          # # Flag to toggle not building the project and letting pack command handle restoring & building, disabled by default
-          # NO_BUILD: # optional
 
+      - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
 
-      # - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
-
-      # - run: dotnet build ${{ inputs.PROJECT_FILE_PATH }}
-
-      # - run: dotnet pack -c '${{ inputs.PROJECT_FILE_PATH }}' --version-suffix $GITHUB_RUN_ID
+      - run: |
+          dotnet build ${{ inputs.PROJECT_FILE_PATH }}
+          dotnet pack  ${{ inputs.PROJECT_FILE_PATH }} --version-suffix $GITHUB_RUN_ID
 
       - run: |
           ls bin/Release/ || true
