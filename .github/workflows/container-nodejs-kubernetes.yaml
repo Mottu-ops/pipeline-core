@@ -9,35 +9,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # - name: Checkout
-      #   uses: actions/checkout@v2.4.2
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
 
-      # - name: Dump github context
-      #   run:   echo "$GITHUB_CONTEXT"
-      #   shell: bash
-      #   env:
-      #     GITHUB_CONTEXT: ${{ toJson(github) }}        
+      - name: Dump github context
+        run:   echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}        
 
-      # - name: Auth Google Clould Plataform
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Setup docker
-      #   run: gcloud auth configure-docker -q
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
 
-      # - name: Setup Node.js environment
-      #   uses: actions/setup-node@v3.4.1
-      #   with:
-      #     node-version-file: .nvmrc
-      #     cache: 'npm'
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
 
-      # - run: npm ci || npm install
+      - run: npm ci || npm install
 
-      # - run: npm run build
+      - run: npm run build
 
       - run: |
           REPOSITORY_NAME=$(basename ${{ github.repository }})
