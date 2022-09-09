@@ -12,6 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.4.2
 
+      - name: Dump github context
+        run:   echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}        
+
       - name: Auth Google Clould Plataform
         uses: google-github-actions/auth@v0
         with:
@@ -27,24 +33,17 @@ jobs:
         uses: actions/setup-node@v3.4.1
         with:
           node-version-file: .nvmrc
-          cache: 'npm'        
+          cache: 'npm'
 
       - run: npm ci || npm install
 
       - run: npm run build
 
       - run: |
+          docker build -t gcr.io/mottu-321312/mottu/images/${{ github.event.repository.name }}:${{ github.sha }}
           make docker-build
         name: 'build images'
 
-
-
-            
-
-
-
-    
-      
   test:
     name: test
     needs: build
@@ -74,71 +73,3 @@ jobs:
     steps:
       - run: echo "deploy homologation"       
       
-#   test:
-#     name: test
-#     needs: build
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: echo "build"       
-
-
-  
-  
-      
-#   hello_world_job:
-#     runs-on: ubuntu-latest
-#     name: A job to say hello
-#     steps:
-
-#        - uses: actions/checkout@v3
-#         with:
-#          repository: defaultbr/cicd-base
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          ref: main    
-         
-         
-         
-       
-#       - run: echo "${{ secrets }}"
-#       - run: echo segredo é "${{ secrets.SECRET_FROM_ACTION_SECRETS }}"
-
-#       - id: buildContainerHomologation
-#         uses: ./.github/actions/build-container
-#         name: "action From Workflow name"
-#         with:
-#           environment: homologation
-#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
-#           tag: tag:abc1
-          
-      
-#       - id: buildContainerProduction
-#         uses: ./.github/actions/build-container
-#         name: "action From Workflow name"
-#         with:
-#           environment: production
-#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
-#           tag: tag:abc1
-          
-          
-
-#       - run: echo random-number ${{ steps.foo.outputs.random-number }}
-#         shell: bash
-        
-#   TEST:
-#     name: TEST
-#     runs-on: ubuntu-latest
-#     needs:
-#       - BUILD
-#     steps:
-#       - run: echo "🎉 oi ${{ inputs.username }}"
-#       - run: printenv | sort      
-      
-#   CD:
-#     name: Deploy
-#     environment: homologation
-#     runs-on: ubuntu-latest
-#     steps:
-# #       - uses: actions/checkout@v3
-#       - run: echo ${{ env.ENVIRONMENT }}
-      
-#       - run: printenv | sort
