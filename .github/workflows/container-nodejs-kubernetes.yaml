@@ -45,6 +45,7 @@ jobs:
           docker build -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA
         name: 'build images'
 
+
   test:
     name: test
     needs: build
