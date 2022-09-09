@@ -40,8 +40,9 @@ jobs:
       - run: npm run build
 
       - run: |
-          docker build -t gcr.io/mottu-321312/mottu/images/${{ github.event.repository.name }}:${{ github.sha }}
-          make docker-build
+          REPOSITORY_NAME=$(basename ${{ github.repository }})
+          COMMIT_SHA=${{ github.sha }}
+          docker build -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA
         name: 'build images'
 
   test:
