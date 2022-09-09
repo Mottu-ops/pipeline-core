@@ -18,8 +18,13 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
 
-      - name: test application
+      - name: dependencies
+        run: make install_dependencies
+
+      - name: test
         run: make test_application
+
+                
 
   build:
     name: build
@@ -53,8 +58,12 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
 
-      - name: build application
+      - name: dependencies
+        run: make install_dependencies
+
+      - name: build
         run: make build_application
+
 
       - run: |
           REPOSITORY_NAME=$(basename ${{ github.repository }})
