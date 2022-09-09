@@ -34,18 +34,19 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: 'npm'
+      
+      - name: dependencies
+        run: make install_dependencies
 
-      - run: npm ci || npm install
-
-      - run: npm run build
+      - name: build application
+        run: make build_application
 
       - run: |
           REPOSITORY_NAME=$(basename ${{ github.repository }})
           COMMIT_SHA=${{ github.sha }}
-          echo docker build -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA .
           docker build -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA .
-        name: 'build images'
-
+          docker push gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA
+        name: 'build & push container'
 
   test:
     name: test
