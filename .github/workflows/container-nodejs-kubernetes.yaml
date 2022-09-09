@@ -18,9 +18,6 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
 
-      - name: dependencies
-        run: make install_dependencies
-
       - name: test
         run: make test_application
 
@@ -57,9 +54,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: 'npm'
-
-      - name: dependencies
-        run: make install_dependencies
 
       - name: build
         run: make build_application
