@@ -4,8 +4,26 @@ on:
   workflow_call:
 
 jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: test application
+        run: make test_application
+
   build:
     name: build
+    needs: test
     runs-on: ubuntu-latest
     steps:
 
@@ -34,9 +52,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: 'npm'
-      
-      - name: dependencies
-        run: make install_dependencies
 
       - name: build application
         run: make build_application
@@ -48,12 +63,7 @@ jobs:
           docker push gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA
         name: 'build & push container'
 
-  test:
-    name: test
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "build" 
+
       
   deployHomologation:
     name: deploy homologation
