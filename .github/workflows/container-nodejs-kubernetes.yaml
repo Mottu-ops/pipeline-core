@@ -62,7 +62,18 @@ jobs:
       - run: |
           REPOSITORY_NAME=$(basename ${{ github.repository }})
           COMMIT_SHA=${{ github.sha }}
-          docker build -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA .
+          docker build \
+            -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA \
+            -l github.repository=${{github.repository}} \
+            -l github.repositoryUrl=${{github.repositoryUrl}} \
+            -l github.sha=${{github.sha}} \
+            -l github.ref=${{github.ref}} \            
+            -l github.sender.ref_name=${{github.sender.ref_name}} \            
+            -l github.sender.ref_type=${{github.sender.ref_type}} \
+            -l github.sender.login=${{github.sender.login}} \
+            -l github.sender.url=${{github.sender.url}} \
+            -l github.sender.login=${{github.sender.login}} \
+            .
           docker push gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA
         name: 'build & push container'
 
