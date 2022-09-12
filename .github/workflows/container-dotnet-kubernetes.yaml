@@ -67,21 +67,17 @@ jobs:
         with:
           nuget-version: 6.3.0
 
-      - name: Setup .NET Core SDK 6.x
+      - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v2.1.0
         with:
-          dotnet-version: 3.1.x
+          dotnet-version: |
+            3.1.x
+            6.x
           source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}    
 
-      - name: Setup .NET Core SDK 6.x
-        uses: actions/setup-dotnet@v2.1.0
-        with:
-          dotnet-version: 6.x
-          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}  
+          
       - name: build application
         run: make build_application
 
