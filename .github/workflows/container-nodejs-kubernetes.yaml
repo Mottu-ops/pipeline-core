@@ -36,24 +36,7 @@ jobs:
         run:   echo "$GITHUB_CONTEXT"
         shell: bash
         env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}      
-
-
-      - name: tag & push containers
-        run: |
-          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
-          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
-
-          echo "Apollo: $APOLLO_CONTAINER_NAME"
-          echo "Zeus: $APOLLO_CONTAINER_NAME"
-
-          docker tag application:latest $APOLLO_CONTAINER_NAME 
-          docker tag application:latest $ZEUS_CONTAINER_NAME
-
-          docker push $APOLLO_CONTAINER_NAME
-          docker push $ZEUS_CONTAINER_NAME      
-
-                  
+          GITHUB_CONTEXT: ${{ toJson(github) }}        
 
       - name: Auth Google Clould Plataform
         uses: google-github-actions/auth@v0
@@ -88,6 +71,20 @@ jobs:
             .
 
         name: 'build container'
+
+      - name: tag & push containers
+        run: |
+          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
+          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
+
+          echo "Apollo: $APOLLO_CONTAINER_NAME"
+          echo "Zeus: $APOLLO_CONTAINER_NAME"
+
+          docker tag application:latest $APOLLO_CONTAINER_NAME 
+          docker tag application:latest $ZEUS_CONTAINER_NAME
+
+          docker push $APOLLO_CONTAINER_NAME
+          docker push $ZEUS_CONTAINER_NAME            
 
   deployHomologation:
     name: homologation (apollo)
