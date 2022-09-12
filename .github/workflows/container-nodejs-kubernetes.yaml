@@ -73,6 +73,9 @@ jobs:
           APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
           ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
 
+          echo "Apollo: $APOLLO_CONTAINER_NAME"
+          echo "Zeus: $APOLLO_CONTAINER_NAME"
+
           docker tag application:latest $APOLLO_CONTAINER_NAME 
           docker tag application:latest $ZEUS_CONTAINER_NAME
 
