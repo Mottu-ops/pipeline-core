@@ -98,8 +98,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2.4.2
-        
-            
+
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.4.1
 
@@ -119,8 +119,12 @@ jobs:
 
 
       - run: |
-          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
-          gcloud container images add-tag $CONTAINER_NAME
+          echo " "
+
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
+
+          echo "$CONTAINER_NAME"
+          gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
 
       
   deployProduction:
