@@ -84,7 +84,7 @@ jobs:
       #     docker tag application:latest $ZEUS_CONTAINER_NAME
 
       #     docker push $APOLLO_CONTAINER_NAME
-          docker push $ZEUS_CONTAINER_NAME            
+          # docker push $ZEUS_CONTAINER_NAME            
 
   deployHomologation:
     name: homologation (apollo)
