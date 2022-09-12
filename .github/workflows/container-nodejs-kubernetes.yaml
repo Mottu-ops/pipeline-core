@@ -132,10 +132,8 @@ jobs:
   deployProduction:
     name: production (zeus)
     environment: production
-    if: startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request'
-    needs: 
-      - build
-      - test
+    if: always() && (startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request')
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
