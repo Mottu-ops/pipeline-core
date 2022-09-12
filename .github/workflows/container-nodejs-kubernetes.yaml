@@ -75,6 +75,7 @@ jobs:
         name: 'build container'
 
       - name: tag & push containers
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
           ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
@@ -109,8 +110,6 @@ jobs:
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
-
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
