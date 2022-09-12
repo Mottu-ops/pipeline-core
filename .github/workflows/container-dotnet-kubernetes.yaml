@@ -4,71 +4,121 @@ on:
   workflow_call:
 
 jobs:
-  build:
-    name: build
+  test:
+    name: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
-      - run: echo "build"
 
       - name: Checkout
         uses: actions/checkout@v2.4.2
         
-
-      - name: Setup .NET Core SDK 3.1.x
-        uses: actions/setup-dotnet@v2.1.0
+      - name: Setup NuGet.exe for use with actions
+        uses: NuGet/setup-nuget@v1.0.7
         with:
-          dotnet-version: 3.1.x
+          nuget-version: 6.3.0
 
       - name: Setup .NET Core SDK 6.x
         uses: actions/setup-dotnet@v2.1.0
         with:
-          dotnet-version: 6.x          
+          dotnet-version: 3.1.x
+          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}    
 
-
-
-
-
-      - name: Docker Login
-        uses: docker/login-action@v2.0.0
+      - name: Setup .NET Core SDK 6.x
+        uses: actions/setup-dotnet@v2.1.0
         with:
-          # Server address of Docker registry. If not set then will default to Docker Hub
-          registry: gcr.io/mottu-321312
-          # Username used to log against the Docker registry
-          username: # optional
-          # Password or personal access token used to log against the Docker registry
-          password: # optional
-          # Specifies whether the given registry is ECR (auto, true or false)
-          ecr: # optional, default is auto
-          # Log out from the Docker registry at the end of a job
-          logout: # optional, default is true        
+          dotnet-version: 6.x
+          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}    
+
+      - name: test
+        run: make test_application
+
+                
+
+  build:
+    name: build
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+      - name: Dump github context
+        run:   echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}        
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+      - name: Setup NuGet.exe for use with actions
+        uses: NuGet/setup-nuget@v1.0.7
+        with:
+          nuget-version: 6.3.0
+
+      - name: Setup .NET Core SDK 6.x
+        uses: actions/setup-dotnet@v2.1.0
+        with:
+          dotnet-version: 3.1.x
+          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}    
+
+      - name: Setup .NET Core SDK 6.x
+        uses: actions/setup-dotnet@v2.1.0
+        with:
+          dotnet-version: 6.x
+          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}  
+      - name: build application
+        run: make build_application
 
       - run: |
-          make docker-build
-        name: 'build images'
+          docker build \
+            -t application:latest \
+            --label github.repository=${{github.repository}} \
+            --label github.repositoryUrl=${{github.repositoryUrl}} \
+            --label github.sha="${{github.sha}}" \
+            --label github.ref="${{github.ref}}" \
+            --label github.event.sender.login="${{github.event.sender.login}}" \
+            --label github.event.sender.url="${{github.event.sender.url}}" \
+            .
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.4.1
-        with:
-          node-version-file: .nvmrc
-          cache: 'npm'
+        name: 'build container'
 
-            
+      - name: tag & push containers
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
+          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
 
-      - run: npm ci || npm install
+          echo "Apollo: $APOLLO_CONTAINER_NAME"
+          echo "Zeus: $APOLLO_CONTAINER_NAME"
 
-      - run: make build-homolog
+          docker tag application:latest $APOLLO_CONTAINER_NAME 
+          docker tag application:latest $ZEUS_CONTAINER_NAME
 
-    
-      
-  test:
-    name: test
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "build" 
-      
+          docker push $APOLLO_CONTAINER_NAME
+          docker push $ZEUS_CONTAINER_NAME            
+
   deployHomologation:
-    name: deploy homologation
+    name: homologation (apollo)
     environment: homologation
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: 
@@ -76,84 +126,68 @@ jobs:
       - test
     runs-on: ubuntu-latest
     steps:
-      - run: echo "deploy homologation" 
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+
+      # - name: Setup Node.js environment
+      #   uses: actions/setup-node@v3.4.1
+
+      # - name: Auth Google Clould Plataform
+      #   uses: google-github-actions/auth@v0
+      #   with:
+      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # - name: Set up Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v0
+
+      # - name: Setup docker
+      #   run: gcloud auth configure-docker -q
+
+
+
+      # - run: |
+      #     echo " "
+
+      #     CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
+
+      #     echo "$CONTAINER_NAME"
+      #     yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
+
       
   deployProduction:
-    name: deploy production
+    name: production (zeus)
     environment: production
-    if: startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request'
+    if: always() && (startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request')
     needs: 
       - build
       - test
     runs-on: ubuntu-latest
     steps:
-      - run: echo "deploy homologation"       
-      
-#   test:
-#     name: test
-#     needs: build
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: echo "build"       
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
 
 
-  
-  
-      
-#   hello_world_job:
-#     runs-on: ubuntu-latest
-#     name: A job to say hello
-#     steps:
+      # - name: Setup Node.js environment
+      #   uses: actions/setup-node@v3.4.1
 
-#        - uses: actions/checkout@v3
-#         with:
-#          repository: defaultbr/cicd-base
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          ref: main    
-         
-         
-         
-       
-#       - run: echo "${{ secrets }}"
-#       - run: echo segredo é "${{ secrets.SECRET_FROM_ACTION_SECRETS }}"
+      # - name: Auth Google Clould Plataform
+      #   uses: google-github-actions/auth@v0
+      #   with:
+      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-#       - id: buildContainerHomologation
-#         uses: ./.github/actions/build-container
-#         name: "action From Workflow name"
-#         with:
-#           environment: homologation
-#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
-#           tag: tag:abc1
-          
-      
-#       - id: buildContainerProduction
-#         uses: ./.github/actions/build-container
-#         name: "action From Workflow name"
-#         with:
-#           environment: production
-#           secret_qualquer: ${{ secrets.SECRET_FROM_ACTION_SECRETS }}
-#           tag: tag:abc1
-          
-          
+      # - name: Set up Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v0
 
-#       - run: echo random-number ${{ steps.foo.outputs.random-number }}
-#         shell: bash
-        
-#   TEST:
-#     name: TEST
-#     runs-on: ubuntu-latest
-#     needs:
-#       - BUILD
-#     steps:
-#       - run: echo "🎉 oi ${{ inputs.username }}"
-#       - run: printenv | sort      
-      
-#   CD:
-#     name: Deploy
-#     environment: homologation
-#     runs-on: ubuntu-latest
-#     steps:
-# #       - uses: actions/checkout@v3
-#       - run: echo ${{ env.ENVIRONMENT }}
-      
-#       - run: printenv | sort
+      # - name: Setup docker
+      #   run: gcloud auth configure-docker -q
+
+
+
+      # - run: |
+      #     echo " "
+
+      #     CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
+      #     echo "$CONTAINER_NAME"
+      #     yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
