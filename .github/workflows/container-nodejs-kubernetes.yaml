@@ -60,9 +60,8 @@ jobs:
 
 
       - run: |
-          COMMIT_SHA=${{ github.sha }}
           docker build \
-            -t application:$COMMIT_SHA \
+            -t application:latest \
             --label github.repository=${{github.repository}} \
             --label github.repositoryUrl=${{github.repositoryUrl}} \
             --label github.sha="${{github.sha}}" \
@@ -71,16 +70,15 @@ jobs:
             --label github.event.sender.url="${{github.event.sender.url}}" \
             .
 
-
-
           APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
           ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
 
-          docker tag application:$COMMIT_SHA $APOLLO_CONTAINER_NAME $ZEUS_CONTAINER_NAME
+          docker tag application:latest $APOLLO_CONTAINER_NAME 
+          docker tag application:latest $ZEUS_CONTAINER_NAME
 
           docker push $APOLLO_CONTAINER_NAME
           docker push $ZEUS_CONTAINER_NAME
-          
+
         name: 'build & push container'
 
 
