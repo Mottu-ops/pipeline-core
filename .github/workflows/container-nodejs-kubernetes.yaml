@@ -38,53 +38,53 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}        
 
-      # - name: Auth Google Clould Plataform
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Setup docker
-      #   run: gcloud auth configure-docker -q
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
 
-      # - name: Setup Node.js environment
-      #   uses: actions/setup-node@v3.4.1
-      #   with:
-      #     node-version-file: .nvmrc
-      #     cache: 'npm'
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
 
-      # - name: build application
-      #   run: make build_application
+      - name: build application
+        run: make build_application
 
 
-      # - run: |
-      #     docker build \
-      #       -t application:latest \
-      #       --label github.repository=${{github.repository}} \
-      #       --label github.repositoryUrl=${{github.repositoryUrl}} \
-      #       --label github.sha="${{github.sha}}" \
-      #       --label github.ref="${{github.ref}}" \
-      #       --label github.event.sender.login="${{github.event.sender.login}}" \
-      #       --label github.event.sender.url="${{github.event.sender.url}}" \
-      #       .
+      - run: |
+          docker build \
+            -t application:latest \
+            --label github.repository=${{github.repository}} \
+            --label github.repositoryUrl=${{github.repositoryUrl}} \
+            --label github.sha="${{github.sha}}" \
+            --label github.ref="${{github.ref}}" \
+            --label github.event.sender.login="${{github.event.sender.login}}" \
+            --label github.event.sender.url="${{github.event.sender.url}}" \
+            .
 
-      #   name: 'build container'
+        name: 'build container'
 
-      # - name: tag & push containers
-      #   run: |
-      #     APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
-      #     ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
+      - name: tag & push containers
+        run: |
+          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
+          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
 
-      #     echo "Apollo: $APOLLO_CONTAINER_NAME"
-      #     echo "Zeus: $APOLLO_CONTAINER_NAME"
+          echo "Apollo: $APOLLO_CONTAINER_NAME"
+          echo "Zeus: $APOLLO_CONTAINER_NAME"
 
-      #     docker tag application:latest $APOLLO_CONTAINER_NAME 
-      #     docker tag application:latest $ZEUS_CONTAINER_NAME
+          docker tag application:latest $APOLLO_CONTAINER_NAME 
+          docker tag application:latest $ZEUS_CONTAINER_NAME
 
-      #     docker push $APOLLO_CONTAINER_NAME
-          # docker push $ZEUS_CONTAINER_NAME            
+          docker push $APOLLO_CONTAINER_NAME
+          docker push $ZEUS_CONTAINER_NAME            
 
   deployHomologation:
     name: homologation (apollo)
@@ -136,8 +136,31 @@ jobs:
       - test
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
-          echo "ZEUS"
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
 
-      
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+
+
+      - run: |
+          echo " "
+          
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
+          echo "$CONTAINER_NAME"
+          yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
