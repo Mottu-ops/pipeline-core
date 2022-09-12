@@ -70,19 +70,23 @@ jobs:
             --label github.event.sender.url="${{github.event.sender.url}}" \
             .
 
-          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
-          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
+        name: 'build container'
 
-          echo "Apollo: $APOLLO_CONTAINER_NAME"
-          echo "Zeus: $APOLLO_CONTAINER_NAME"
+    - name: tag & push containers
+      run: |
+        APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
+        ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
 
-          docker tag application:latest $APOLLO_CONTAINER_NAME 
-          docker tag application:latest $ZEUS_CONTAINER_NAME
+        echo "Apollo: $APOLLO_CONTAINER_NAME"
+        echo "Zeus: $APOLLO_CONTAINER_NAME"
 
-          docker push $APOLLO_CONTAINER_NAME
-          docker push $ZEUS_CONTAINER_NAME
+        docker tag application:latest $APOLLO_CONTAINER_NAME 
+        docker tag application:latest $ZEUS_CONTAINER_NAME
 
-        name: 'build & push container'
+        docker push $APOLLO_CONTAINER_NAME
+        docker push $ZEUS_CONTAINER_NAME      
+
+
 
 
       
