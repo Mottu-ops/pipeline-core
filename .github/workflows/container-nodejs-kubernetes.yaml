@@ -60,10 +60,11 @@ jobs:
 
 
       - run: |
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container.name.apollo")
           REPOSITORY_NAME=$(basename ${{ github.repository }})
           COMMIT_SHA=${{ github.sha }}
           docker build \
-            -t gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA \
+            -t $CONTAINER_NAME:$COMMIT_SHA \
             --label github.repository=${{github.repository}} \
             --label github.repositoryUrl=${{github.repositoryUrl}} \
             --label github.sha="${{github.sha}}" \
@@ -71,7 +72,7 @@ jobs:
             --label github.event.sender.login="${{github.event.sender.login}}" \
             --label github.event.sender.url="${{github.event.sender.url}}" \
             .
-          docker push gcr.io/mottu-321312/mottu/images/$REPOSITORY_NAME:$COMMIT_SHA
+          docker push $CONTAINER_NAME:$COMMIT_SHA
         name: 'build & push container'
 
 
