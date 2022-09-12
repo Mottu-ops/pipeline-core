@@ -7,6 +7,7 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
 
       - name: Checkout
@@ -27,6 +28,7 @@ jobs:
     name: build
     needs: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
 
       - name: Checkout
@@ -148,8 +150,6 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-
-
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
@@ -160,7 +160,7 @@ jobs:
 
       - run: |
           echo " "
-          
+
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
           yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
