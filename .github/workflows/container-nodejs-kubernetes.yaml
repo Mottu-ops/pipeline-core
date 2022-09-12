@@ -124,7 +124,7 @@ jobs:
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
 
           echo "$CONTAINER_NAME"
-          gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
+          yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
 
       
   deployProduction:
