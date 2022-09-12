@@ -55,7 +55,7 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
 
-      - name: build
+      - name: build application
         run: make build_application
 
 
