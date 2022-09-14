@@ -26,24 +26,15 @@ jobs:
         uses: actions/setup-dotnet@v2.1.0
         with:
           dotnet-version: 6.x
-          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
+          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu/nuget/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }} 
 
       - run: dotnet restore ${{ inputs.PROJECT_FILE_PATH }}
 
-
       - run: dotnet build -c Release --no-restore ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
 
       - run: dotnet pack --no-build --no-restore -c Release ${{ inputs.PROJECT_FILE_PATH }} /p:AssemblyVersion=${{ inputs.VERSION }} /p:Version=${{ inputs.VERSION }}
-
-      - name: Setup .NET Core SDK 6.x
-        uses: actions/setup-dotnet@v2.1.0
-        with:
-          dotnet-version: 6.x
-          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu/nuget/v3/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}
 
       - name: 'dotnet publish'
         run: dotnet nuget push --api-key AzureArtifacts bin/Release/*.nupkg 
