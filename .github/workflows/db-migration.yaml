@@ -67,7 +67,7 @@ jobs:
       - name: Azure SQL Deploy (dacpac, file, folder)
         uses: XLipcak/sql-action@v1.0.5
         with:
-          server-name: ${{secrets.SERVER_NAME}}
+          # server-name: ${{secrets.SERVER_NAME}}
           connection-string: ${{secrets.CONNECTION_STRING}}
           dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
           arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
