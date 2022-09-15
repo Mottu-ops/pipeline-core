@@ -64,11 +64,13 @@ jobs:
           name: build
           path: .
 
-      - name: Add sqlpackage to PATH
-        uses: coreywebber/setup-sqlpackage@v1      
+      - name: Install a SQL Server suite of tools
+        uses: potatoqualitee/mssqlsuite@v1.5.1
+        with:
+          install: sqlengine, sqlclient, sqlpackage, localdb    
 
       - run: |
-          SqlPackage 
+          sqlpackage 
             /Action:Publish 
             /SourceFile: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
             /TargetConnectionString:${{secrets.CONNECTION_STRING}}
