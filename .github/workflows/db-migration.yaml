@@ -64,35 +64,22 @@ jobs:
           name: build
           path: .
 
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v2.1.0
-        with:
-          dotnet-version: |
-            3.1.x
-            6.x
-          source-url: https://pkgs.dev.azure.com/mottu-ops/_packaging/mottu-ops/nuget/v3/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_ARTIFACTS_PAT }}    
-
-      - run: dotnet add package Microsoft.SqlServer.DacFx
-
       - name: Add sqlpackage to PATH
         uses: coreywebber/setup-sqlpackage@v1      
 
-      
       - run: |
           SqlPackage 
             /Action:Publish 
             /SourceFile: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
             /TargetConnectionString:${{secrets.CONNECTION_STRING}}
 
-      - name: Azure SQL Deploy (dacpac, file, folder)
-        uses: XLipcak/sql-action@v1.0.5
-        with:
-          # server-name: ${{secrets.SERVER_NAME}}
-          connection-string: ${{secrets.CONNECTION_STRING}}
-          dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
-          arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
+      # - name: Azure SQL Deploy (dacpac, file, folder)
+      #   uses: XLipcak/sql-action@v1.0.5
+      #   with:
+      #     # server-name: ${{secrets.SERVER_NAME}}
+      #     connection-string: ${{secrets.CONNECTION_STRING}}
+      #     dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
+      #     arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
 
 
 
