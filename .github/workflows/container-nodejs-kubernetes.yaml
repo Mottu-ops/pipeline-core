@@ -24,8 +24,8 @@ jobs:
 
                 
 
-  build:
-    name: build
+  build-homologation:
+    name: build homolog
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
@@ -58,8 +58,7 @@ jobs:
           cache: 'npm'
 
       - name: build application
-        run: make build_application
-
+        run: make build_application ENVIRONMENT=homologation
 
       - run: |
           docker build \
@@ -87,14 +86,66 @@ jobs:
           docker tag application:latest $ZEUS_CONTAINER_NAME
 
           docker push $APOLLO_CONTAINER_NAME
-          docker push $ZEUS_CONTAINER_NAME            
+          docker push $ZEUS_CONTAINER_NAME   
+
+
+  build-production:
+    name: build production
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2    
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: build application
+        run: make build_application ENVIRONMENT=production
+
+
+      - run: |
+          docker build \
+            -t application:latest \
+            --label github.repository=${{github.repository}} \
+            --label github.repositoryUrl=${{github.repositoryUrl}} \
+            --label github.sha="${{github.sha}}" \
+            --label github.ref="${{github.ref}}" \
+            --label github.event.sender.login="${{github.event.sender.login}}" \
+            --label github.event.sender.url="${{github.event.sender.url}}" \
+            .
+
+        name: 'build container'
+
+      - name: tag & push containers
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
+          docker tag application:latest $ZEUS_CONTAINER_NAME
+          docker push $ZEUS_CONTAINER_NAME                      
 
   deployHomologation:
     name: homologation (apollo)
     environment: homologation
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: 
-      - build
+      - build-homologation
       - test
     runs-on: ubuntu-latest
     steps:
@@ -133,7 +184,7 @@ jobs:
     environment: production
     if: always() && (startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request')
     needs: 
-      - build
+      - build-production
       - test
     runs-on: ubuntu-latest
     steps:
