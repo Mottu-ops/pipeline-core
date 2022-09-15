@@ -69,11 +69,11 @@ jobs:
         with:
           install: sqlpackage
 
+
       - run: |
-          sqlpackage 
-            /Action:Publish 
-            /SourceFile: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
-            /TargetConnectionString:${{secrets.CONNECTION_STRING}}
+        sqlpackage /Action:Publish /SourceFile:" ${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}"
+
+
 
       # - name: Azure SQL Deploy (dacpac, file, folder)
       #   uses: XLipcak/sql-action@v1.0.5
