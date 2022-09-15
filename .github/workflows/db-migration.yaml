@@ -41,8 +41,7 @@ jobs:
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{inputs.BUILD_CONFIGURATION}} ${{inputs.SOLUTION_FILE_PATH}} 
-
-
+      
     - run: mkdir -p build-artifacts
 
     - run: mv mottu.Script\bin\Release\* build-artifacts
@@ -53,9 +52,9 @@ jobs:
         name: build
         path: build-artifacts
 
-  apply-development:
-    name: apply development
-    environment: development
+  apply-homologation:
+    name: apply homologation
+    environment: homologation
     runs-on: windows-latest
     needs: build
     steps:
