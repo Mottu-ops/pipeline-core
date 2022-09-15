@@ -70,7 +70,7 @@ jobs:
           install: sqlpackage
 
 
-      - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:${{secrets.CONNECTION_STRING}}
+      - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}"
 
 
 
