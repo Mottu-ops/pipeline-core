@@ -76,6 +76,10 @@ jobs:
 
       - run: dotnet add package Microsoft.SqlServer.DacFx
 
+      - name: Add sqlpackage to PATH
+        uses: coreywebber/setup-sqlpackage@v1      
+
+      
       - run: |
           SqlPackage 
             /Action:Publish 
