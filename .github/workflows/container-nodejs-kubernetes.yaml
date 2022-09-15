@@ -58,7 +58,7 @@ jobs:
           cache: 'npm'
 
       - name: build application
-        run: make build_application ENVIRONMENT=homologation
+        run: make build_application_homologation
 
       - run: |
           docker build \
@@ -116,7 +116,7 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
 
-      - name: build application
+      - name: build application_production
         run: make build_application ENVIRONMENT=production
 
 
