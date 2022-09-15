@@ -77,16 +77,8 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
-          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
-
-          echo "Apollo: $APOLLO_CONTAINER_NAME"
-          echo "Zeus: $APOLLO_CONTAINER_NAME"
-
           docker tag application:latest $APOLLO_CONTAINER_NAME 
-          docker tag application:latest $ZEUS_CONTAINER_NAME
-
           docker push $APOLLO_CONTAINER_NAME
-          docker push $ZEUS_CONTAINER_NAME   
 
 
   build-production:
@@ -136,7 +128,7 @@ jobs:
       - name: tag & push containers
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
+          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
           docker tag application:latest $ZEUS_CONTAINER_NAME
           docker push $ZEUS_CONTAINER_NAME                      
 
