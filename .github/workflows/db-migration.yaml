@@ -112,6 +112,11 @@ jobs:
 
       - run: sqlpackage /action:DeployReport  /OutputPath:reports /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
+      - name: Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v2
+        with: 
+          name: reports
+          path: reports
 
   apply-production:
     name: apply production
@@ -132,3 +137,8 @@ jobs:
 
       - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
+      - name: Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v2
+        with: 
+          name: reports
+          path: reports
