@@ -52,11 +52,31 @@ jobs:
         name: build
         path: build-artifacts
 
+  preview-homologation:
+    name: preview homologation
+    environment: homologation
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: build
+          path: .
+
+      - name: Install a SQL Server suite of tools
+        uses: potatoqualitee/mssqlsuite@v1.5.1
+        with:
+          install: sqlpackage
+
+      - run: sqlpackage /action:DeployReport /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
+
+
   apply-homologation:
     name: apply homologation
     environment: homologation
     runs-on: windows-latest
-    needs: build
+    needs: preview-homologation
     steps:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
@@ -73,19 +93,8 @@ jobs:
       - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
 
-
-      # - name: Azure SQL Deploy (dacpac, file, folder)
-      #   uses: XLipcak/sql-action@v1.0.5
-      #   with:
-      #     # server-name: ${{secrets.SERVER_NAME}}
-      #     connection-string: ${{secrets.CONNECTION_STRING}}
-      #     dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
-      #     arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
-
-
-
-  apply-production:
-    name: apply production
+  preview-production:
+    name: preview production
     environment: production
     runs-on: windows-latest
     needs: build
@@ -96,12 +105,31 @@ jobs:
           name: build
           path: .
 
-          
-
-      - name: Azure SQL Deploy (dacpac, file, folder)
-        uses: XLipcak/sql-action@v1.0.5
+      - name: Install a SQL Server suite of tools
+        uses: potatoqualitee/mssqlsuite@v1.5.1
         with:
-          server-name: ${{secrets.SERVER_NAME}}
-          connection-string: ${{secrets.CONNECTION_STRING}}
-          dacpac-package: ${{inputs.OUTPUT_DACPAC_FILE_NAME}}
-          arguments: ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
+          install: sqlpackage
+
+      - run: sqlpackage /action:DeployReport /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
+
+
+  apply-production:
+    name: apply production
+    environment: production
+    runs-on: windows-latest
+    needs: preview-production
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: build
+          path: .
+
+      - name: Install a SQL Server suite of tools
+        uses: potatoqualitee/mssqlsuite@v1.5.1
+        with:
+          install: sqlpackage
+
+
+      - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
+
