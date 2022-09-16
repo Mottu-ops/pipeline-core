@@ -54,7 +54,7 @@ jobs:
 
   preview-homologation:
     name: preview homologation
-    environment: homologation
+    environment: homologation/review
     runs-on: windows-latest
     needs: build
     steps:
@@ -74,7 +74,7 @@ jobs:
 
   apply-homologation:
     name: apply homologation
-    environment: homologation
+    environment: homologation/deploy
     runs-on: windows-latest
     needs: preview-homologation
     steps:
@@ -95,7 +95,7 @@ jobs:
 
   preview-production:
     name: preview production
-    environment: production
+    environment: production/review
     runs-on: windows-latest
     needs: build
     steps:
@@ -115,7 +115,7 @@ jobs:
 
   apply-production:
     name: apply production
-    environment: production
+    environment: production/deploy
     runs-on: windows-latest
     needs: preview-production
     steps:
@@ -129,6 +129,6 @@ jobs:
         uses: potatoqualitee/mssqlsuite@v1.5.1
         with:
           install: sqlpackage
-          
+
       - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
