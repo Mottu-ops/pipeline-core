@@ -54,7 +54,7 @@ jobs:
 
   apply-homologation:
     name: apply homologation
-    environment: homologation/deploy
+    environment: homologation
     runs-on: windows-latest
     needs: build
     steps:
