@@ -18,8 +18,6 @@ jobs:
         with:
           nuget-version: 6.3.0
 
-  
-
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v2.1.0
         with:
@@ -118,34 +116,29 @@ jobs:
       - test
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout
         uses: actions/checkout@v2.4.2
 
 
-      # - name: Setup Node.js environment
-      #   uses: actions/setup-node@v3.4.1
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
 
-      # - name: Auth Google Clould Plataform
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Setup docker
-      #   run: gcloud auth configure-docker -q
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
 
-
-
-      # - run: |
-      #     echo " "
-
-      #     CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
-
-      #     echo "$CONTAINER_NAME"
-      #     yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
+      - run: |
+          echo " "
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
+          echo "$CONTAINER_NAME"
+          yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
 
       
   deployProduction:
@@ -160,26 +153,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.4.2
 
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
 
-      # - name: Setup Node.js environment
-      #   uses: actions/setup-node@v3.4.1
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # - name: Auth Google Clould Plataform
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
 
-      # - name: Setup docker
-      #   run: gcloud auth configure-docker -q
+      - run: |
+          echo " "
 
-
-
-      # - run: |
-      #     echo " "
-
-      #     CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
-      #     echo "$CONTAINER_NAME"
-      #     yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
+          echo "$CONTAINER_NAME"
+          yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
