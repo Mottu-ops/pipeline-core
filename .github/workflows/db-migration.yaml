@@ -69,7 +69,7 @@ jobs:
         with:
           install: sqlpackage
 
-      - run: sqlpackage /action:DeployReport /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
+      - run: sqlpackage /action:DeployReport /OutputPath:reports /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
 
   apply-homologation:
@@ -110,7 +110,7 @@ jobs:
         with:
           install: sqlpackage
 
-      - run: sqlpackage /action:DeployReport /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
+      - run: sqlpackage /action:DeployReport  /OutputPath:reports /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
 
   apply-production:
