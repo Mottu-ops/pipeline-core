@@ -129,7 +129,6 @@ jobs:
         uses: potatoqualitee/mssqlsuite@v1.5.1
         with:
           install: sqlpackage
-
-
+          
       - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" /p:DropObjectsNotInSource=True /p:BlockOnPossibleDataLoss=false /p:ScriptDatabaseOptions=false /p:DoNotDropObjectTypes="Users;Logins;RoleMembership;Permissions;Credentials;DatabaseScopedCredentials;DatabaseRoles"
 
