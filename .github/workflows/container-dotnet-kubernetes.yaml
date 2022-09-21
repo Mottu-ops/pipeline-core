@@ -93,6 +93,11 @@ jobs:
 
         name: 'build container'
 
+      - run: |
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
+          docker push $TEMPORARY_CONTAINER_NAME
+        name: "push container"
+
       # - name: tag & push containers
       #   if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
       #   run: |
@@ -119,7 +124,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.4.2
-
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.4.1
