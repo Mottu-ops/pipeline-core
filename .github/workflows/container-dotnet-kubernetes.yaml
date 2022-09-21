@@ -80,8 +80,9 @@ jobs:
         run: make build_application
 
       - run: |
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           docker build \
-            -t application:latest \
+            -t $TEMPORARY_CONTAINER_NAME \
             --label github.repository=${{github.repository}} \
             --label github.repositoryUrl=${{github.repositoryUrl}} \
             --label github.sha="${{github.sha}}" \
@@ -92,20 +93,20 @@ jobs:
 
         name: 'build container'
 
-      - name: tag & push containers
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: |
-          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
-          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
+      # - name: tag & push containers
+      #   if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+      #   run: |
+      #     APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo"):${{github.sha}}
+      #     ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus"):${{github.sha}}
 
-          echo "Apollo: $APOLLO_CONTAINER_NAME"
-          echo "Zeus: $APOLLO_CONTAINER_NAME"
+      #     echo "Apollo: $APOLLO_CONTAINER_NAME"
+      #     echo "Zeus: $APOLLO_CONTAINER_NAME"
 
-          docker tag application:latest $APOLLO_CONTAINER_NAME 
-          docker tag application:latest $ZEUS_CONTAINER_NAME
+      #     docker tag application:latest $APOLLO_CONTAINER_NAME 
+      #     docker tag application:latest $ZEUS_CONTAINER_NAME
 
-          docker push $APOLLO_CONTAINER_NAME
-          docker push $ZEUS_CONTAINER_NAME            
+      #     docker push $APOLLO_CONTAINER_NAME
+      #     docker push $ZEUS_CONTAINER_NAME            
 
   deployHomologation:
     name: homologation (apollo)
@@ -136,9 +137,10 @@ jobs:
 
       - run: |
           echo " "
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
           echo "$CONTAINER_NAME"
-          yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
+          yes | gcloud container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:${{github.sha}} 
 
       
   deployProduction:
@@ -169,7 +171,7 @@ jobs:
 
       - run: |
           echo " "
-
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
-          yes | gcloud container images add-tag $CONTAINER_NAME:${{github.sha}} $CONTAINER_NAME:latest
+          yes | gcloud container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:${{github.sha}} 
