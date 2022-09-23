@@ -75,7 +75,7 @@ jobs:
 
   apply-production:
     name: apply production
-    environment: production/deploy
+    environment: production
     runs-on: windows-latest
     needs: build
     steps:
