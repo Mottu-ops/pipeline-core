@@ -100,6 +100,7 @@ jobs:
         name: 'build container'
 
       - run: |
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.sha}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
           docker push $TEMPORARY_CONTAINER_NAME
         name: "push container"      
