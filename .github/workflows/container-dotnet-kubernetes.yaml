@@ -100,7 +100,7 @@ jobs:
         name: 'build container'
 
       - run: |
-          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
           docker push $TEMPORARY_CONTAINER_NAME
         name: "push container"      
 
@@ -132,10 +132,11 @@ jobs:
 
       - run: |
           echo " "
-          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.sha}}" | tr '[:upper:]' '[:lower:]')
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
           echo "$CONTAINER_NAME"
-          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:${{github.sha}} 
+          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
 
   deployProduction:
     name: production (zeus)
@@ -165,7 +166,7 @@ jobs:
 
       - run: |
           echo " "
-          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
           yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:${{github.sha}} 
