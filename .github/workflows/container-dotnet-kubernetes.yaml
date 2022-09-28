@@ -86,7 +86,7 @@ jobs:
         run: make build_application
 
       - run: |
-          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
+          TEMPORARY_CONTAINER_NAME=${{github.sha}}
           docker build \
             -t $TEMPORARY_CONTAINER_NAME \
             --label github.repository=${{github.repository}} \
@@ -100,8 +100,9 @@ jobs:
         name: 'build container'
 
       - run: |
-          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.sha}}" | tr '[:upper:]' '[:lower:]')
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
+          docker tag ${{github.sha}} $TEMPORARY_CONTAINER_NAME
           docker push $TEMPORARY_CONTAINER_NAME
         name: "push container"      
 
@@ -133,7 +134,7 @@ jobs:
 
       - run: |
           echo " "
-          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.sha}}" | tr '[:upper:]' '[:lower:]')
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
           echo "$CONTAINER_NAME"
@@ -167,6 +168,7 @@ jobs:
 
       - run: |
           echo " "
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):$NORMALIZED_BRANCH_NAME-${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
