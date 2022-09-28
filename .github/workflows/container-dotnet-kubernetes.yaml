@@ -43,17 +43,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.4.2
 
-      - name: Dump github context
-        run:   echo "$GITHUB_CONTEXT"
-        shell: bash
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}  
+      # - name: Dump github context
+      #   run:   echo "$GITHUB_CONTEXT"
+      #   shell: bash
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}  
 
 
-      - name: envs
-        run: printenv | sort      
-
-
+      # - name: envs
+      #   run: printenv | sort      
 
       - name: Auth Google Clould Plataform
         uses: google-github-actions/auth@v0
@@ -99,8 +97,7 @@ jobs:
 
         name: 'build container'
 
-      - run: |
-          
+      - run: |   
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           docker tag ${{github.sha}} $TEMPORARY_CONTAINER_NAME
           docker push $TEMPORARY_CONTAINER_NAME
@@ -133,12 +130,12 @@ jobs:
         run: gcloud auth configure-docker -q
 
       - run: |
-          echo " "
           NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
           echo "$CONTAINER_NAME"
           yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
+        name: tag container
 
   deployProduction:
     name: production (zeus)
@@ -167,9 +164,9 @@ jobs:
         run: gcloud auth configure-docker -q
 
       - run: |
-          echo " "
           NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
           yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
+        name: tag container          
