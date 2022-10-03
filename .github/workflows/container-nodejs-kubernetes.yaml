@@ -128,7 +128,7 @@ jobs:
       - name: tag & push containers
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary")production-${{github.sha}}
+          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):production-${{github.sha}}
           docker tag application:latest $ZEUS_CONTAINER_NAME
           docker push $ZEUS_CONTAINER_NAME                      
 
@@ -162,7 +162,8 @@ jobs:
 
 
 
-      - run: |
+      - name: tag container
+        run: |
           echo " "
           NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):homologation-${{github.sha}}
@@ -197,9 +198,11 @@ jobs:
       - name: Setup docker
         run: gcloud auth configure-docker -q
 
-      - run: |
+
+      - name: tag container
+        run: |
           echo " "
           NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):production-${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
-          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}}   
+          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}}           
