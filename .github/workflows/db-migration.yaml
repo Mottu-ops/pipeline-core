@@ -23,7 +23,6 @@ on:
 permissions:
   contents: read
 
-
 jobs:
   build:
     name: build migration
@@ -69,9 +68,7 @@ jobs:
         with:
           install: sqlpackage
 
-
       - run: sqlpackage /Action:Publish /SourceFile:"${{inputs.OUTPUT_DACPAC_FILE_NAME}}" /TargetConnectionString:"${{secrets.CONNECTION_STRING}}" ${{inputs.ADDITIONAL_SQL_ARGUMENTS}}
-
 
   apply-production:
     name: apply production

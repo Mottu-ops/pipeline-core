@@ -20,9 +20,7 @@ jobs:
           # cache: 'node_modules'
 
       - name: test
-        run: make test_application
-
-                
+        run: make test_application          
 
   build-homologation:
     name: build homolog
@@ -80,7 +78,6 @@ jobs:
           docker tag application:latest $APOLLO_CONTAINER_NAME 
           docker push $APOLLO_CONTAINER_NAME
 
-
   build-production:
     name: build production
     needs: test
@@ -106,11 +103,9 @@ jobs:
         uses: actions/setup-node@v3.4.1
         with:
           node-version-file: .nvmrc
-          # cache: 'node_modules'
 
       - name: build application_production
         run: make build_application_production
-
 
       - run: |
           docker build \

@@ -31,8 +31,6 @@ jobs:
       - name: test
         run: make test_application
 
-                
-
   build:
     name: build
     needs: test
@@ -42,16 +40,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2.4.2
-
-      # - name: Dump github context
-      #   run:   echo "$GITHUB_CONTEXT"
-      #   shell: bash
-      #   env:
-      #     GITHUB_CONTEXT: ${{ toJson(github) }}  
-
-
-      # - name: envs
-      #   run: printenv | sort      
 
       - name: Auth Google Clould Plataform
         uses: google-github-actions/auth@v0
@@ -169,4 +157,4 @@ jobs:
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
           yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
-        name: tag container          
+        name: tag container
