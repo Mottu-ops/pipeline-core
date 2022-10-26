@@ -20,7 +20,7 @@ jobs:
           # cache: 'node_modules'
 
       - name: test
-        run: python src/app.py         
+        run: make test_application     
 
   build-homologation:
     name: build homolog
