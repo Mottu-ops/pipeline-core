@@ -1,0 +1,210 @@
+name: Container on Kubernetes
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+      - name: Setup python environment
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: '3.10'
+          # cache: 'node_modules'
+
+      - name: test
+        run: python src/app.py         
+
+  build-homologation:
+    name: build homolog
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+      - name: Dump github context
+        run: echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}        
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+      - name: Setup python environment
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: '3.10'
+          # cache: 'node_modules'
+
+      - name: build application
+        run: make build_application_homologation
+
+      - run: |
+          docker build \
+            -t application:latest \
+            --label github.repository=${{github.repository}} \
+            --label github.repositoryUrl=${{github.repositoryUrl}} \
+            --label github.sha="${{github.sha}}" \
+            --label github.ref="${{github.ref}}" \
+            --label github.event.sender.login="${{github.event.sender.login}}" \
+            --label github.event.sender.url="${{github.event.sender.url}}" \
+            .
+
+        name: 'build container'
+
+      - name: tag & push containers
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          APOLLO_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):homologation-${{github.sha}}
+          docker tag application:latest $APOLLO_CONTAINER_NAME 
+          docker push $APOLLO_CONTAINER_NAME
+
+  build-production:
+    name: build production
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2    
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+      - name: Setup python environment
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: '3.10'
+          # cache: 'node_modules'
+
+      - name: build application_production
+        run: make build_application_production
+
+      - run: |
+          docker build \
+            -t application:latest \
+            --label github.repository=${{github.repository}} \
+            --label github.repositoryUrl=${{github.repositoryUrl}} \
+            --label github.sha="${{github.sha}}" \
+            --label github.ref="${{github.ref}}" \
+            --label github.event.sender.login="${{github.event.sender.login}}" \
+            --label github.event.sender.url="${{github.event.sender.url}}" \
+            .
+
+        name: 'build container'
+
+      - name: tag & push containers
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          ZEUS_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):production-${{github.sha}}
+          docker tag application:latest $ZEUS_CONTAINER_NAME
+          docker push $ZEUS_CONTAINER_NAME                      
+
+  deployHomologation:
+    name: homologation (apollo)
+    environment: homologation
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: 
+      - build-homologation
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+
+      - name: Setup python environment
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: '3.10'
+          # cache: 'node_modules'
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+
+
+      - name: tag container
+        run: |
+          echo " "
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):homologation-${{github.sha}}
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.apollo")
+          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}}           
+
+      
+  deployProduction:
+    name: production (zeus)
+    environment: production
+    if: always() && (startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request')
+    needs: 
+      - build-production
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+
+
+      - name: Setup python environment
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: '3.10'
+          # cache: 'node_modules'
+
+      - name: Auth Google Clould Plataform
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Setup docker
+        run: gcloud auth configure-docker -q
+
+
+      - name: tag container
+        run: |
+          echo " "
+          NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
+          TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):production-${{github.sha}}
+          CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
+          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}}           
