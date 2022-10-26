@@ -56,7 +56,7 @@ jobs:
           # cache: 'node_modules'
 
       - name: build application
-        run: make build_application_homologation
+        run: make build_application
 
       - run: |
           docker build \
@@ -106,7 +106,7 @@ jobs:
           # cache: 'node_modules'
 
       - name: build application_production
-        run: make build_application_production
+        run: make build_application
 
       - run: |
           docker build \
