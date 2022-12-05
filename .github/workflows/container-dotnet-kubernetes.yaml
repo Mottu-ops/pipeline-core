@@ -161,7 +161,7 @@ jobs:
       - name: Setup docker
         run: gcloud auth configure-docker -q
       
-      timeout-minutes: 10
+        timeout-minutes: 10
       - run: |
           NORMALIZED_BRANCH_NAME=$(sed -E 's/[^[:alnum:][:space:]]+/-/g' <<<"${{github.ref_name}}" | tr '[:upper:]' '[:lower:]')
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
