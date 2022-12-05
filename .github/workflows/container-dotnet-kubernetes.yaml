@@ -83,6 +83,15 @@ jobs:
             --label github.event.sender.url="${{github.event.sender.url}}" \
             .
 
+    #- name: SonarQube Scan
+    #  uses: kitabisa/sonarqube-action@v1.2.0
+    #  with:
+    #    host: ${{ secrets.SONARQUBE_HOST }}
+    #    login: ${{ secrets.SONARQUBE_TOKEN }}
+    #    projectBaseDir: "src/"
+    #    projectKey: $TEMPORARY_CONTAINER_NAME
+
+
         name: 'build container'
 
       - run: |   
@@ -90,7 +99,7 @@ jobs:
           docker tag ${{github.sha}} $TEMPORARY_CONTAINER_NAME
           docker push $TEMPORARY_CONTAINER_NAME
         name: "push container"      
-
+  
   deployHomologation:
     name: homologation (apollo)
     environment: homologation
@@ -158,3 +167,4 @@ jobs:
           echo "$CONTAINER_NAME"
           yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
         name: tag container
+    timeout-minutes: 30
