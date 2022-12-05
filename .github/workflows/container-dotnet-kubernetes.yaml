@@ -167,5 +167,5 @@ jobs:
           TEMPORARY_CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.temporary"):${{github.sha}}
           CONTAINER_NAME=$(node -p "require('./.github/config.json').container_names.zeus")
           echo "$CONTAINER_NAME"
-          yes | gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
+          gcloud -q container images add-tag $TEMPORARY_CONTAINER_NAME $CONTAINER_NAME:$NORMALIZED_BRANCH_NAME-${{github.sha}} 
         name: tag container
