@@ -35,7 +35,7 @@ jobs:
     name: build
     needs: test
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' ) || github.event_name == 'pull_request'
+    #if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' ) || github.event_name == 'pull_request'
     steps:
 
       - name: Checkout
@@ -103,7 +103,7 @@ jobs:
   deployHomologation:
     name: homologation (apollo)
     environment: homologation
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' ) || github.event_name == 'pull_request'
+    #if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' ) || github.event_name == 'pull_request'
     needs: 
       - build
       - test
